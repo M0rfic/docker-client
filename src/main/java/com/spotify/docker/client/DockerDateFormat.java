@@ -59,12 +59,4 @@ public class DockerDateFormat extends StdDateFormat {
 
     return super.parse(source);
   }
-
-  @Override
-  @SuppressWarnings("CloneDoesntCallSuperClone")
-  public DockerDateFormat clone() {
-    // Normally clone should call super.clone(), but that works only if StdDateFormat calls
-    // super.clone(), which it does not. We must create a new instance and disable the warning.
-    return new DockerDateFormat();
-  }
 }
