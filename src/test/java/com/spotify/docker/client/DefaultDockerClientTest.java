@@ -4782,9 +4782,9 @@ public class DefaultDockerClientTest {
   public void testStorageOpt() throws Exception {
     requireDockerApiVersionAtLeast("1.24", "StorageOpt");
     requireStorageDriverNotAufs();
-    // Doesn't work on Travis with Docker API v1.32 because storage driver doesn't have pquota
+    // Doesn't work on Travis with Docker API >= v1.32 because storage driver doesn't have pquota
     // mount option enabled.
-    assumeFalse(dockerApiVersionEquals("1.32") && TRAVIS);
+    assumeFalse(dockerApiVersionAtLeast("1.32") && TRAVIS);
     // Pull image
     sut.pull(BUSYBOX_LATEST);
 
@@ -4913,7 +4913,7 @@ public class DefaultDockerClientTest {
         .build();
 
     final SwarmSpec updatedSpec = SwarmSpec.builder()
-        .name(swarm.swarmSpec().name() + "2")
+        .name("default")
         .labels(newLabels)
         .orchestration(newOrchestration)
         .raft(newRaft)
@@ -5125,7 +5125,7 @@ public class DefaultDockerClientTest {
         .builder()
         .containerSpec(ContainerSpec.builder()
             .image("alpine")
-            .command(new String[] {"ping", "-c1000", "localhost"})
+            .command("ping", "-c1000", "localhost")
             .mounts(Mount.builder()
                 .volumeOptions(VolumeOptions.builder()
                     .driverConfig(com.spotify.docker.client.messages.mount.Driver.builder().build())
@@ -5137,7 +5137,7 @@ public class DefaultDockerClientTest {
         .resources(ResourceRequirements.builder().build())
         .restartPolicy(RestartPolicy.builder().build())
         .placement(Placement.create(null))
-        .networks(NetworkAttachmentConfig.builder().build())
+        .networks(NetworkAttachmentConfig.builder().target("bridge").build())
         .logDriver(Driver.builder().build())
         .build();
 
